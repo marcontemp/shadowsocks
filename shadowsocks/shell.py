@@ -212,6 +212,7 @@ def check_config(config, is_local):
 
 
 def get_config(is_local):
+    #https://www.programiz.com/python-programming/global-keyword
     global verbose
 
     logging.basicConfig(level=logging.INFO,

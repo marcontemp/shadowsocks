@@ -23,18 +23,23 @@ import os
 import logging
 import signal
 
+#print(sys.path) #['/home/red/GITREPO-MARCON/shadowsocks/shadowsocks', '/home/red/GITREPO-MARCON/shadowsocks', '/usr/lib64/python34.zip', '/usr/lib64/python3.4', '/usr/lib64/python3.4/plat-linux', '/usr/lib64/python3.4/lib-dynload', '/home/red/shadowsocks/lib64/python3.4/site-packages', '/home/red/shadowsocks/lib64/python3.4/site-packages/setuptools-39.1.0-py3.4.egg', '/home/red/shadowsocks/lib64/python3.4/site-packages/pip-10.0.1-py3.4.egg', '/home/red/shadowsocks/lib/python3.4/site-packages', '/home/red/shadowsocks/lib/python3.4/site-packages/setuptools-39.1.0-py3.4.egg', '/home/red/shadowsocks/lib/python3.4/site-packages/pip-10.0.1-py3.4.egg']
+#print(os.path.dirname(__file__))    #/home/red/GITREPO-MARCON/shadowsocks/shadowsocks
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../'))
+
 from shadowsocks import shell, daemon, eventloop, tcprelay, udprelay, asyncdns
 
 
 @shell.exception_handle(self_=False, exit_code=1)
 def main():
+    #print(sys.version_info)
     shell.check_python()
 
     # fix py2exe
+    #The hasattr() method returns true if an object has the given named attribute and false if it does not.
     if hasattr(sys, "frozen") and sys.frozen in \
             ("windows_exe", "console_exe"):
-        p = os.path.dirname(os.path.abspath(sys.executable))
+        p = os.path.dirname(os.path.abspath(sys.executable))    #/home/red/shadowsocks/bin
         os.chdir(p)
 
     config = shell.get_config(True)
@@ -65,4 +70,5 @@ def main():
     loop.run()
 
 if __name__ == '__main__':
-    main()
+    #main()
+    pass

@@ -102,8 +102,12 @@ def daemon_start(pid_file, log_file):
 
     # fork only once because we are sure parent will exit
     pid = os.fork()
+    #you're telling the program to test that condition, and immediately trigger an error if the condition is false
+    # assert <condition>,<error message>
+    # assert False, "Oh no! This assertion failed!"
     assert pid != -1
 
+    # return child's pid
     if pid > 0:
         # parent waits for its child
         time.sleep(5)
@@ -116,6 +120,7 @@ def daemon_start(pid_file, log_file):
         os.kill(ppid, signal.SIGINT)
         sys.exit(1)
 
+    #in c: child process become to [session group leader] & [process group leader]
     os.setsid()
     signal.signal(signal.SIGHUP, signal.SIG_IGN)
 

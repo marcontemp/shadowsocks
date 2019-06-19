@@ -743,6 +743,16 @@ class TCPRelay(object):
             listen_port = config['server_port']
         self._listen_port = listen_port
 
+        # getaddrinfo(host,  port, family=0, socktype=0, proto=0, flags=0)
+        # 根据给定的参数host/port，相应的转换成一个包含用于创建socket对象的五元组，
+        # 参数host为域名，以字符串形式给出代表一个IPV4/IPV6地址或者None.
+        # 参数port如果字符串形式就代表一个服务名，比如“http”"ftp""email"等，或者为数字，或者为None
+        # 参数family为地主族，可以为AF_INET  ，AF_INET6 ，AF_UNIX.
+        # 参数socketype可以为SOCK_STREAM(TCP)或者SOCK_DGRAM(UDP)
+        # 参数proto通常为0可以直接忽略
+        # 参数flags为AI_*的组合，比如AI_NUMERICHOST，它会影响函数的返回值
+        # 附注：给参数host,port传递None时建立在C基础，通过传递NULL。
+        # 该函数返回一个五元组(family, socktype, proto, canonname, sockaddr)，同时第五个参数sockaddr也是一个二元组(address, port)
         addrs = socket.getaddrinfo(listen_addr, listen_port, 0,
                                    socket.SOCK_STREAM, socket.SOL_TCP)
         if len(addrs) == 0:
@@ -750,6 +760,11 @@ class TCPRelay(object):
                             (listen_addr, listen_port))
         af, socktype, proto, canonname, sa = addrs[0]
         server_socket = socket.socket(af, socktype, proto)
+
+        # 有三个参数：
+        # level：选项定义的层次。支持SOL_SOCKET、IPPROTO_TCP、IPPROTO_IP和IPPROTO_IPV6。
+        # optname：需设置的选项。
+        # value：设置选项的值。
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server_socket.bind(sa)
         server_socket.setblocking(False)
@@ -759,6 +774,10 @@ class TCPRelay(object):
             except socket.error:
                 logging.error('warning: fast open is not available')
                 self._config['fast_open'] = False
+
+        # Listen for connections made to the socket.
+        # The backlog argument specifies the maximum number of queued connections and should be at least 0;
+        # the maximum value is system-dependent (usually 5), the minimum value is forced to 0.
         server_socket.listen(1024)
         self._server_socket = server_socket
         self._stat_callback = stat_callback
